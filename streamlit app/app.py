@@ -51,6 +51,14 @@ else:
 
 if st.button("Generate Predictions"):
     with st.spinner("Predicting..."):
-        predictions_df = predictor.predict(input_df)
+        EXPECTED_COLS = [
+            'age', 'sex', 'bmi', 'children', 'smoker',
+            'region_northeast', 'region_northwest', 'region_southeast', 'region_southwest'
+        ]
+        processed = predictor.preprocessor.transform(input_df)
+        processed = processed[EXPECTED_COLS]
+        predictions = predictor.model.predict(processed)
+        result = input_df.copy()
+        result["Predicted Charges"] = predictions
     st.success("Predictions Generated!")
-    st.dataframe(predictions_df)
+    st.dataframe(result)

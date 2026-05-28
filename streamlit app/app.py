@@ -19,8 +19,7 @@ st.write("Enter your information below manually or upload a CSV file to predict 
 MODEL_PATH = os.path.join(PROJECT_ROOT, "models", "artifacts.pkl")
 
 predictor = Predictor(
-    model_path=MODEL_PATH,
-    target_column="charges",
+    artifacts_path=MODEL_PATH,
     debug=False
 )
 

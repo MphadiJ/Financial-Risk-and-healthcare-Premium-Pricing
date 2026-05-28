@@ -5,10 +5,9 @@ import sys
 import os
 from inference.Prediction import Predictor
 
-# Add src folder to path
 PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 SRC_PATH = os.path.join(PROJECT_ROOT, "src")
-sys.path.append(SRC_PATH)
+sys.path.insert(0, SRC_PATH) 
 
 # Streamlit Page Config
 st.set_page_config(

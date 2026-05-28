@@ -1,31 +1,25 @@
-# streamlit app
 import streamlit as st
 import pandas as pd
 import sys
 import os
-from inference.Prediction import Predictor
 
+# Path fix FIRST, before any custom imports
 PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 SRC_PATH = os.path.join(PROJECT_ROOT, "src")
-sys.path.insert(0, SRC_PATH) 
+sys.path.insert(0, SRC_PATH)
 
-# Streamlit Page Config
-st.set_page_config(
-    page_title="Medical Insurance Charges Predictor",
-    layout="wide"
-)
+#  Now import
+from inference.Prediction import Predictor
 
+st.set_page_config(page_title="Medical Insurance Charges Predictor", layout="wide")
 st.title("Annual Medical Insurance Charges Predictor")
-st.write(
-    """
-    Enter your information below manually or upload a CSV file to predict insurance charges
-    using a trained Random Forest model.
-    """
-)
+st.write("Enter your information below manually or upload a CSV file to predict insurance charges using a trained Random Forest model.")
 
-# Load Predictor Model
+# Model path points to the repo's models folder, not your local PC
+MODEL_PATH = os.path.join(PROJECT_ROOT, "models", "artifacts.pkl")
+
 predictor = Predictor(
-    model_path=os.path.join(PROJECT_ROOT, "/home/selowa-mphadi/PycharmProjects/pythonProject/medical project/models/artifacts.pkl"),
+    model_path=MODEL_PATH,
     target_column="charges",
     debug=False
 )
@@ -40,17 +34,14 @@ smoker = st.selectbox("Smoker", options=["yes", "no"])
 region = st.selectbox("Region", options=["northwest", "northeast", "southwest", "southeast"])
 
 manual_input_df = pd.DataFrame([{
-    "age": age,
-    "bmi": bmi,
-    "children": children,
-    "sex": sex,
-    "smoker": smoker,
-    "region": region
+    "age": age, "bmi": bmi, "children": children,
+    "sex": sex, "smoker": smoker, "region": region
 }])
 
 # CSV Upload Section
 st.header("Upload CSV")
 uploaded_file = st.file_uploader("Upload a CSV with the same columns as training data", type=["csv"])
+
 if uploaded_file:
     csv_df = pd.read_csv(uploaded_file)
     st.write("Preview of uploaded data:")
@@ -59,10 +50,8 @@ if uploaded_file:
 else:
     input_df = manual_input_df
 
-# Generate Predictions
 if st.button("Generate Predictions"):
     with st.spinner("Predicting..."):
         predictions_df = predictor.predict(input_df)
-
     st.success("Predictions Generated!")
     st.dataframe(predictions_df)
